@@ -13,14 +13,14 @@ type MongoHandler struct {
 	db     string
 }
 
-// GetConnection func
+// GetConnection func returns MongoDB's client
 func GetConnection(host string, dbName string) *MongoHandler {
 	ctx, cn := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cn()
 	cl, _ := mongo.Connect(ctx, options.Client().ApplyURI(host))
-	mh := &MongoHandler{
+	con := &MongoHandler{
 		client: cl,
 		db:     dbName,
 	}
-	return mh
+	return con
 }

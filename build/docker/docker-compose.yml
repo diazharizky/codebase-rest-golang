@@ -1,0 +1,39 @@
+version: "3.4"
+services:
+  mongodb:
+    image: mongo:5.0.1
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+
+  mariadb:
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=codebase_db
+    ports:
+      - "3306:3306"
+
+  generator:
+    image: rucciva/golang:1.15.2-alpine
+    environment:
+      - GOCACHE=/go/build
+    volumes:
+      - ../../:${PWD}/../..
+      - ${GOPATH}/pkg:/go/pkg
+      - ${GOPATH}/build:/go/build
+    working_dir: ${PWD}/../..
+    entrypoint: /bin/sh
+    command: -c "make generate"
+
+  builder:
+    image: rucciva/golang:1.15.2-alpine
+    environment:
+      - GOCACHE=/go/build
+    volumes:
+      - ../../:${PWD}/../..
+      - ${GOPATH}/pkg:/go/pkg
+      - ${GOPATH}/build:/go/build
+    working_dir: ${PWD}/../..
+    entrypoint: /bin/sh
+    command: -c "make build"
